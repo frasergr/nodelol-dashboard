@@ -3,8 +3,7 @@ FROM node:11-alpine AS builder
 WORKDIR /home/node/app
 COPY ./client .
 
-RUN npm install
-RUN npm run build
+RUN npm install && npm run build
 
 FROM node:11-alpine
 
