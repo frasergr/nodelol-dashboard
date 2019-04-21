@@ -1,0 +1,104 @@
+version: '3'
+
+services:
+  prod:
+    container_name: prod
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    image: dashboard-prod
+    restart: always
+    environment:
+      NODE_ENV: 'production'
+      MONGO_HOST: ${MONGO_HOST}
+      MONGO_DB: ${MONGO_DB_PROD}
+      MONGO_DB_USER: ${MONGO_DB_USER_PROD}
+      MONGO_DB_PASSWORD: ${MONGO_DB_PASSWORD_PROD}
+      SERVER_PORT: ${SERVER_PORT}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=web"
+      - "traefik.backend=prod"
+      - "traefik.frontend.rule=Host:dashboard.${DOMAIN}"
+      - "traefik.port=8080"
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - web
+
+  dev:
+    container_name: dev
+    build:
+      context: .
+      args:
+        CLIENT_PORT: ${CLIENT_PORT}
+        SERVER_PORT: ${SERVER_PORT}
+      dockerfile: Dockerfile.dev
+    image: dashboard-dev
+    restart: always
+    volumes:
+      - ./server:/home/node/app
+      - ./client:/home/node/app/client
+    environment:
+      NODE_ENV: 'development'
+      MONGO_HOST: ${MONGO_HOST}
+      MONGO_DB: ${MONGO_DB_DEV}
+      MONGO_DB_USER: ${MONGO_DB_USER_DEV}
+      MONGO_DB_PASSWORD: ${MONGO_DB_PASSWORD_DEV}
+      SERVER_PORT: ${SERVER_PORT}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=web"
+      - "traefik.server.backend=dev-server"
+      - "traefik.server.frontend.rule=Host:dev-server.${DOMAIN}"
+      - "traefik.server.port=8080"
+      - "traefik.client.port=8081"
+      - "traefik.client.backend=dev-client"
+      - "traefik.client.frontend.rule=Host:dev-client.${DOMAIN}"
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - web
+    command: /home/node/app/dev-start.sh
+
+  mongo:
+    container_name: mongo
+    image: mongo
+    restart: always
+    networks:
+      - web
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_DB_PROD: ${MONGO_DB_PROD}
+      MONGO_DB_USER_PROD: ${MONGO_DB_USER_PROD}
+      MONGO_DB_PASSWORD_PROD: ${MONGO_DB_PASSWORD_PROD}
+      MONGO_DB_DEV: ${MONGO_DB_DEV}
+      MONGO_DB_USER_DEV: ${MONGO_DB_USER_DEV}
+      MONGO_DB_PASSWORD_DEV: ${MONGO_DB_PASSWORD_DEV}
+    volumes:
+      - ./init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh
+    command: --smallfiles
+
+  mongo-express:
+    container_name: mongo-express
+    image: mongo-express
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=mongo-express"
+      - "traefik.docker.network=web"
+      - "traefik.frontend.rule=Host:mongo.${DOMAIN}"
+      - "traefik.port=8081"
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - web
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${ME_CONFIG_MONGODB_ADMINUSERNAME}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${ME_CONFIG_MONGODB_ADMINPASSWORD}
+      ME_CONFIG_BASICAUTH_USERNAME: ${ME_CONFIG_BASICAUTH_USERNAME}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${ME_CONFIG_BASICAUTH_PASSWORD}
+    depends_on: 
+      - mongo
+
+networks:
+  web:
+    external: true

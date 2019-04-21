@@ -1,0 +1,28 @@
+FROM node:11-alpine AS builder
+
+WORKDIR /home/node/app
+COPY ./client .
+
+RUN npm install
+RUN npm run build
+
+FROM node:11-alpine
+
+WORKDIR /home/node/app
+
+COPY ./server/package* ./
+
+RUN npm install --production
+RUN npm cache clean --force
+
+COPY ./server .
+
+COPY --from=builder /home/node/app ./client
+
+WORKDIR /home/node/app
+
+RUN find ./client -mindepth 1 -not -path './client/dist*' -delete
+
+EXPOSE 8080
+
+CMD [ "npm", "start" ]

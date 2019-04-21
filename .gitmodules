@@ -1,0 +1,6 @@
+[submodule "server"]
+	path = server
+	url = git@github.com:frasergr/nodelol-server.git
+[submodule "client"]
+	path = client
+	url = git@github.com:frasergr/nodelol-client.git

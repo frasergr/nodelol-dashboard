@@ -1,0 +1,26 @@
+FROM node:11-alpine
+
+ARG SERVER_PORT
+ARG CLIENT_PORT
+
+ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
+ENV PATH=$PATH:/home/node/.npm-global/bin
+
+RUN mkdir -p /home/node/cache/server && mkdir -p /home/node/cache/client && chown -R node:node /home/node/cache
+RUN mkdir -p /home/node/app && mkdir -p /home/node/app/client && chown -R node:node /home/node/app
+
+USER node
+
+WORKDIR /home/node/cache/server
+COPY ./server/package* ./
+RUN npm install concurrently nodemon
+RUN npm install
+
+WORKDIR /home/node/cache/client
+COPY ./client/package* ./
+RUN echo SERVER_PORT=$SERVER_PORT >> ./.env && echo CLIENT_PORT=$CLIENT_PORT >> ./.env
+RUN npm install
+
+WORKDIR /home/node/app
+
+EXPOSE 8080 8081
