@@ -84,3 +84,8 @@ To have changes made to the server or client appear in the production container 
 `docker-compose up -d --force-recreate --build --no-deps prod`
 
 This command will force the recreation of only the production container.
+
+
+Note: If the production URL is inaccessible after recreation, the network backend may not have been recreated in Traefik. Restart prod container:
+
+`docker-compose restart prod`
