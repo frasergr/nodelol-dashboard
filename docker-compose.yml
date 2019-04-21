@@ -15,6 +15,7 @@ services:
       MONGO_DB_USER: ${MONGO_DB_USER_PROD}
       MONGO_DB_PASSWORD: ${MONGO_DB_PASSWORD_PROD}
       SERVER_PORT: ${SERVER_PORT}
+      JWT_SECRET: ${JWT_SECRET_PROD}
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=web"
@@ -47,6 +48,7 @@ services:
       MONGO_DB_USER: ${MONGO_DB_USER_DEV}
       MONGO_DB_PASSWORD: ${MONGO_DB_PASSWORD_DEV}
       SERVER_PORT: ${SERVER_PORT}
+      JWT_SECRET: ${JWT_SECRET_DEV}
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=web"
