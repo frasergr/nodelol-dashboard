@@ -80,5 +80,7 @@ npm install <some package>
 ```
 
 To have changes made to the server or client appear in the production container (dashboard URL) run:
+
 `docker-compose up -d --force-recreate --build --no-deps prod`
+
 This command will force the recreation of only the production container.
