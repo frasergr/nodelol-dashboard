@@ -25,6 +25,9 @@ SERVER_PORT=<express server port number>
 CLIENT_PORT=<dev client webpack-dev-server port number>
 MONGO_HOST=<traefik hostname of mongo container>
 
+JWT_SECRET_DEV=<dev jwt secret for signing>
+JWT_SECRET_PROD=<prod jwt secret for signing>
+
 MONGO_INITDB_ROOT_USERNAME=<mongo root username>
 MONGO_INITDB_ROOT_PASSWORD=<mongo root password>
 
