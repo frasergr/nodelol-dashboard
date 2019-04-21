@@ -20,7 +20,7 @@ services:
       - "traefik.docker.network=web"
       - "traefik.backend=prod"
       - "traefik.frontend.rule=Host:dashboard.${DOMAIN}"
-      - "traefik.port=8080"
+      - "traefik.port=${SERVER_PORT}"
       - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
       - mongo
@@ -52,8 +52,8 @@ services:
       - "traefik.docker.network=web"
       - "traefik.server.backend=dev-server"
       - "traefik.server.frontend.rule=Host:dev-server.${DOMAIN}"
-      - "traefik.server.port=8080"
-      - "traefik.client.port=8081"
+      - "traefik.server.port=${SERVER_PORT}"
+      - "traefik.client.port=${CLIENT_PORT}"
       - "traefik.client.backend=dev-client"
       - "traefik.client.frontend.rule=Host:dev-client.${DOMAIN}"
       - "com.centurylinklabs.watchtower.enable=true"
