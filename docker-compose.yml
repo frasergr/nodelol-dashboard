@@ -22,7 +22,6 @@ services:
       - "traefik.backend=prod"
       - "traefik.frontend.rule=Host:dashboard.${DOMAIN}"
       - "traefik.port=${SERVER_PORT}"
-      - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
       - mongo
     networks:
@@ -58,7 +57,6 @@ services:
       - "traefik.client.port=${CLIENT_PORT}"
       - "traefik.client.backend=dev-client"
       - "traefik.client.frontend.rule=Host:dev-client.${DOMAIN}"
-      - "com.centurylinklabs.watchtower.enable=true"
     networks:
       - web
     depends_on:
