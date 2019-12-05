@@ -19,9 +19,10 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=web"
-      - "traefik.backend=prod"
-      - "traefik.frontend.rule=Host:dashboard.${DOMAIN}"
-      - "traefik.port=${SERVER_PORT}"
+      - "traefik.http.routers.dashboard-redirect.rule=Host(`dashboard.${DOMAIN}`)"
+      - "traefik.http.routers.dashboard-redirect.middlewares=redirect@file"
+      - "traefik.http.routers.dashboard.rule=Host(`dashboard.${DOMAIN}`)"
+      - "traefik.http.routers.dashboard.tls=true"
     depends_on:
       - mongo
     networks:
@@ -51,12 +52,20 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=web"
-      - "traefik.server.backend=dev-server"
-      - "traefik.server.frontend.rule=Host:dev-server.${DOMAIN}"
-      - "traefik.server.port=${SERVER_PORT}"
-      - "traefik.client.port=${CLIENT_PORT}"
-      - "traefik.client.backend=dev-client"
-      - "traefik.client.frontend.rule=Host:dev-client.${DOMAIN}"
+      - "traefik.http.routers.dashboard-server-dev-redirect.rule=Host(`dev-server.${DOMAIN}`)"
+      - "traefik.http.routers.dashboard-server-dev-redirect.middlewares=redirect@file"
+      - "traefik.http.routers.dashboard-server-dev.rule=Host(`dev-server.${DOMAIN}`)"
+      - "traefik.http.routers.dashboard-server-dev.tls=true"
+      - "traefik.http.routers.dashboard-client-dev-redirect.rule=Host(`dev-server.${DOMAIN}`)"
+      - "traefik.http.routers.dashboard-client-dev-redirect.middlewares=redirect@file"
+      - "traefik.http.routers.dashboard-client-dev.rule=Host(`dev-client.${DOMAIN}`)"
+      - "traefik.http.routers.dashboard-client-dev.tls=true"
+      - "traefik.http.routers.dashboard-server-dev-redirect.service=dashboard-server-dev"
+      - "traefik.http.routers.dashboard-client-dev-redirect.service=dashboard-client-dev"
+      - "traefik.http.routers.dashboard-server-dev.service=dashboard-server-dev"
+      - "traefik.http.routers.dashboard-client-dev.service=dashboard-client-dev"
+      - "traefik.http.services.dashboard-server-dev.loadbalancer.server.port=${SERVER_PORT}"
+      - "traefik.http.services.dashboard-client-dev.loadbalancer.server.port=${CLIENT_PORT}"
     networks:
       - web
     depends_on:
@@ -88,10 +97,11 @@ services:
     restart: always
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=mongo-express"
       - "traefik.docker.network=web"
-      - "traefik.frontend.rule=Host:mongo.${DOMAIN}"
-      - "traefik.port=8081"
+      - "traefik.http.routers.mongo-redirect.rule=Host(`mongo.${DOMAIN}`)"
+      - "traefik.http.routers.mongo-redirect.middlewares=redirect@file"
+      - "traefik.http.routers.mongo.rule=Host(`mongo.${DOMAIN}`)"
+      - "traefik.http.routers.mongo.tls=true"
       - "com.centurylinklabs.watchtower.enable=true"
     networks:
       - web
