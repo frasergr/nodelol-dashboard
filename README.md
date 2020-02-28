@@ -64,7 +64,7 @@ Production app:
 You may also access mongo-express from here:
 - `https://mongo.<your domain>`
 
-### Making change to server and client code
+### Making changes to server and client code
 
 Make changes in the ./server and ./client git submodule directories. Changes will be reflected at the dev-client and dev-server URLs automatically.
 
